@@ -1,0 +1,95 @@
+---
+title: "Youtube Music Channels Analysis"
+author: "Harshad Jadhav"
+date: "29/01/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem Statement
+
+
+
+
+
+
+## Installing and importing required packages
+```{r}
+#install.packages("tidyverse")
+#install.packages("ggplot2")
+#install.packages("ggthemes")
+#install.packages("cowplot")
+#install.packages("lubridate")
+#install.packages("forcats")
+
+library(tidyverse)
+library(ggthemes)
+library(ggplot2)
+library(cowplot)
+library(lubridate)
+library(forcats)
+```
+
+## Importing required datasets
+
+You can also embed plots, for example:
+
+```{r}
+channels_details <- read.csv("Channel Details.csv")
+video_stats <- read.csv("Combined_Dataframe.csv")
+```
+
+## Writing a function to represent the scale in thousands, millions and billions for the plots we are going to plot further in this analysis.
+
+```{r}
+scale_units <- function(n) {
+  labs <- ifelse(n < 1000, n,  # less than thousands
+                   ifelse(n < 1e6, paste0(round(n/1e3), 'k'),  # in thousands
+                          ifelse(n < 1e9, paste0(round(n/1e6), 'M'),  # in millions
+                                 ifelse(n < 1e12, paste0(round(n/1e9), 'B'), # in billions
+                                        ifelse(n < 1e15, paste0(round(n/1e12), 'T'), # in trillions
+                                               'too big!'
+                                        )))))
+  return(labs)
+}
+```
+
+## Plotting various barplots, scatter plots, correlation matrix based on channels_details dataset
+
+### Bar graph representing Comparison of Subscribers of each Channel
+
+```{r}
+bar_subs <- ggplot(channels_details, aes(x= Channel_title, y= Subscribers_Count, fill =Channel_title))
+
+bar_subs + geom_bar(stat = "identity")  +
+    scale_fill_hue(l=40) +
+    scale_y_continuous(labels = scale_units) +
+  
+  labs(fill = "Channels",
+       title = "Comparison of Subscribers of each Channel",
+       x = "Channels",
+       y = "Subscribers") +
+  theme_clean() +
+ 
+  theme(plot.title = element_text(size =14,
+                                  face = "bold",
+                                  colour = "black",
+                                  lineheight = 1.2,
+                                  hjust = 0.5
+                                  ),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x =   element_text(size = 9),
+        axis.text.y = element_text(size = 9),
+        legend.title = element_text(size = 14,
+                                    face = "bold",
+                                    colour = "black")) 
+  
+```
+
+We can see that Emiway Bantai has highest subscriber count with around 17 million subscribers.
